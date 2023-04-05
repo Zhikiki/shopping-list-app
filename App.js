@@ -12,6 +12,7 @@ import { getFirestore } from 'firebase/firestore';
 // import the screens
 import ShoppingLists from './components/ShoppingLists';
 import ShoppingListsRealTime from './components/ShoppingListsRealTime';
+import Welcome from './components/Welcome';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,8 +34,9 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='ShoppingLists'>
-        <Stack.Screen name='ShoppingLists'>
+      <Stack.Navigator initialRouteName='Welcome'>
+        <Stack.Screen name='Welcome' component={Welcome} />
+        <Stack.Screen name='ShoppingListsRealTime'>
           {/* {(props) => <ShoppingLists db={db} {...props} />} */}
           {(props) => <ShoppingListsRealTime db={db} {...props} />}
         </Stack.Screen>
