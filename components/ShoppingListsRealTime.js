@@ -12,12 +12,21 @@ import {
 } from 'react-native';
 
 // import firebase functions for quering data
-import { collection, getDocs, addDoc, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  addDoc,
+  onSnapshot,
+  query,
+  where,
+} from 'firebase/firestore';
 
 import React from 'react';
 import { useState, useEffect } from 'react';
 
-const ShoppingListsRealTime = ({ db }) => {
+const ShoppingListsRealTime = ({ db, route }) => {
+  const { userID } = route.params;
+
   const [lists, setLists] = useState([]);
   const [listName, setListName] = useState('');
   const [item1, setItem1] = useState('');
@@ -33,21 +42,22 @@ const ShoppingListsRealTime = ({ db }) => {
   then we set newLists as a value for lists setLists(newLists);
   */
   useEffect(() => {
-    const unsubShoppinglists = onSnapshot(
+    const q = query(
       collection(db, 'shoppinglists'),
-      (documentsSnapshot) => {
-        let newLists = [];
-        documentsSnapshot.forEach((doc) => {
-          newLists.push({ id: doc.id, ...doc.data() });
-        });
-        setLists(newLists);
-      }
+      where('uid', '==', userID)
     );
+    const unsubShoppinglists = onSnapshot(q, (documentsSnapshot) => {
+      let newLists = [];
+      documentsSnapshot.forEach((doc) => {
+        newLists.push({ id: doc.id, ...doc.data() });
+      });
+      setLists(newLists);
+    });
     // code to execute when the component will be unmounted
     // to clean the memory when listener is not needed any more
     return () => {
-        if (unsubShoppinglists) unsubShoppinglists()
-    }
+      if (unsubShoppinglists) unsubShoppinglists();
+    };
   }, []);
 
   const addShoppingList = async (newList) => {
@@ -105,8 +115,19 @@ const ShoppingListsRealTime = ({ db }) => {
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => {
-            const newList = { name: listName, items: [item1, item2] };
-            addShoppingList(newList);
+            const newList = {
+              uid: userID,
+              name: listName,
+              items: [item1, item2],
+            };
+            if (
+              newList.uid !== '' &&
+              newList.name !== '' &&
+              newList.items !== []
+            ) {
+              addShoppingList(newList);
+            } else
+              Alert.alert("You need to add name of the list and it's items");
           }}
         >
           <Text style={styles.addButtonText}>Add</Text>
