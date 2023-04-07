@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Alert, LogBox } from 'react-native';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 
 import { useEffect } from 'react';
 
@@ -30,7 +30,7 @@ const App = () => {
 
   /* Checks if user is connected to the internet 
   connectionStatus.isConnected - is useEffect() dependency []
-  useEffect will be every time re-executed every time when value of dependency changes
+  useEffect will be re-executed every time when value of dependency changes
   */
   useEffect(() => {
     if (connectionStatus.isConnected === false) {
